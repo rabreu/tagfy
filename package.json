@@ -1,0 +1,31 @@
+{
+  "name": "tagfy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "fs": "0.0.1-security",
+    "md5-file": "^5.0.0",
+    "mongoose": "^5.10.14",
+    "music-metadata": "^7.5.0",
+    "nodemon": "^2.0.6",
+    "os": "^0.1.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rabreu/tagfy.git"
+  },
+  "author": "Renata Abreu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rabreu/tagfy/issues"
+  },
+  "homepage": "https://github.com/rabreu/tagfy#readme"
+}
