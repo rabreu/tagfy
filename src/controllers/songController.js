@@ -52,6 +52,12 @@ const updateDatabase = (request, response) => {
                         if(error)
                             console.error(error)
                     })
+                else
+                    songCollection.findByIdAndUpdate(song.id, {"orphan": false}, (error) => {
+                        if(error)
+                            console.error(error)
+                    })
+                
             })
         }
 
