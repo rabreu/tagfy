@@ -14,8 +14,8 @@ const getAll = (request, response) => {
 }
 
 const updateDatabase = (request, response) => {
-    const filePaths = listFolderFiles(PATH)
-    filePaths.forEach(file => {
+    listFolderFiles(PATH, (file) => {
+        console.log(file)
         songCollection.findById(md5File.sync(file), (error, song) => {
             if (error)
                 console.log(error)
