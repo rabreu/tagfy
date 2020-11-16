@@ -11,7 +11,8 @@ const fixPath = (path) => {
             bar = "/"
             break;
     }
-    path = fs.realpathSync(path) + bar
+    if(!path.endsWith(bar))
+        path = fs.realpathSync(path) + bar
     return path
 }
 
