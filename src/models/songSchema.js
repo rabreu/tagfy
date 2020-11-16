@@ -50,6 +50,10 @@ const songSchema = new Schema({
         bitrate: { type: Number, required: false },
         tool: { type: String, required: false },
         codecProfile: { type: String, required: false }
+    },
+    orphan: {
+        type: Boolean,
+        required: true,
     }
 })
 

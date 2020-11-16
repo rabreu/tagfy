@@ -3,6 +3,8 @@ const listFolderFiles = require('../core/listFolderFiles')
 const { PATH } = require('../conf')
 const md5File = require('md5-file')
 const Song = require('../models/Song')
+const fs = require('fs')
+
 
 const getAll = (request, response) => {
     songCollection.find((error, songs) => {
@@ -38,6 +40,21 @@ const updateDatabase = (request, response) => {
                 }
             }
         })
+    })
+    // Check orphan
+    songCollection.find((error, songs) => {
+        if(error)
+            console.error(error) 
+        else  {
+            songs.map(song => {
+                if(!fs.existsSync(song.filepath))
+                    songCollection.findByIdAndUpdate(song.id, {"orphan": true}, (error) => {
+                        if(error)
+                            console.error(error)
+                    })
+            })
+        }
+
     })
     return response.status(200).send({
         "message": "Database updated."

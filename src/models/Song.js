@@ -13,6 +13,7 @@ class Song {
         this.year = null
         this.filepath = filepath
         this.properties = null
+        this.orphan = null
     }
 
     async fillWithMetadata() {
@@ -35,6 +36,7 @@ class Song {
                     "tool": metadata.format.tool,
                     "codecProfile": metadata.format.codecProfile
                 }
+                this.orphan = false
             })
             .catch(err => {
                 console.error(err.message);
