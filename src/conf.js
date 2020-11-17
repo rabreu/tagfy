@@ -1,4 +1,4 @@
-const PATH = "C:\\Users\\renata.braga.d.abreu\\Desktop\\fs\\music_test"
+const PATH = "C:\\path\\to\music\\folder\\here"
 const EXTENTIONS = [".mp3", ".flac", ".ogg"]
 const PORT = 8080
 const DATABASE_HOSTNAME = "localhost"
