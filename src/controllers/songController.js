@@ -15,8 +15,9 @@ const getAll = (request, response) => {
 
 const updateDatabase = (request, response) => {
     listFolderFiles(PATH, (file) => {
-        console.log(file)
-        songCollection.findById(md5File.sync(file), (error, song) => {
+        const id = md5File.sync(file)
+        console.log(`${id} ${file}`)
+        songCollection.findById(id, (error, song) => {
             if (error)
                 console.log(error)
             if (!song) {
