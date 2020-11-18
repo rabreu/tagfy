@@ -13,6 +13,21 @@ const getAll = (request, response) => {
     })
 }
 
+const getArtists = (request, response) => {
+    songCollection.find((error, songs) => {
+        if (error)
+            return response.status(500).send(error)
+        const artists = []
+        songs.forEach(song => {
+            const artistExists = artists.find(artist => artist == song.artist )
+            if(!artistExists) {
+                artists.push(song.artist)
+            }
+        })
+        return response.status(200).send(artists)
+    })
+}
+
 const updateDatabase = (request, response) => {
     listFolderFiles(PATH, (file) => {
         const id = md5File.sync(file)
@@ -63,5 +78,6 @@ const updateDatabase = (request, response) => {
 
 module.exports = {
     getAll,
+    getArtists,
     updateDatabase
 }
