@@ -1,6 +1,6 @@
 const songCollection = require('../models/songSchema')
 const Song = require('../models/Song')
-const listFolderFiles = require('../core/listFolderFiles')
+const listFolderFiles = require('../fs/listFolderFiles')
 const { PATH } = require('../conf')
 const md5File = require('md5-file')
 const fs = require('fs')
