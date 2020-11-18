@@ -28,6 +28,23 @@ const getArtists = (request, response) => {
     })
 }
 
+const getGenres = (request, response) => {
+    songCollection.find((error, songs) => {
+        if (error)
+            return response.status(500).send(error)
+        const genres = []
+        songs.forEach(song => {
+            song.genre.forEach(songGenre => {
+                const genreExists = genres.find(genre => genre == songGenre )
+                if(!genreExists) {
+                    genres.push(songGenre)
+                }
+            })
+        })
+        return response.status(200).send(genres)
+    })
+}
+
 const updateDatabase = (request, response) => {
     listFolderFiles(PATH, (file) => {
         const id = md5File.sync(file)
@@ -79,5 +96,6 @@ const updateDatabase = (request, response) => {
 module.exports = {
     getAll,
     getArtists,
+    getGenres,
     updateDatabase
 }
