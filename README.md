@@ -10,7 +10,7 @@ Imagine uma coleção de arquivos de música e muitos destes arquivos foram baix
 
 ## Solução
 
-O tagfy foi criado para corrigir este problem, pois ele coleta as informações de todos os arquivos de áudio de um determinado diretório e armazena em um banco de dados para que possam ser modificados, junto com o caminho do arquivo para que ele possa ser reproduzido.
+O tagfy foi criado para corrigir este problema, pois ele coleta as informações de todos os arquivos de áudio de um determinado diretório e armazena em um banco de dados para que possam ser modificados, junto com o caminho do arquivo para que ele possa ser reproduzido.
 
 Esta solução se aplica em qualquer caso em que os arquivos em questão não possam ser modificados.
 
