@@ -20,16 +20,16 @@ Esta solução se aplica em qualquer caso em que os arquivos em questão não po
 
 ## Dependências
 
- - express
- - mongoose
- - mongodb
- - npm
- - nodejs
- - nodemon
- - md5-file
- - music-metadata
- - cors
- - fs
+ - [nodejs](https://nodejs.org/)
+ - [mongodb](https://www.mongodb.com/)
+ - [npm](https://www.npmjs.com/)
+   - [nodemon](https://www.npmjs.com/package/nodemon)
+   - [mongoose](https://www.npmjs.com/package/mongoose)
+   - [express](https://www.npmjs.com/package/express)
+   - [md5-file](https://www.npmjs.com/package/md5-file)
+   - [music-metadata](https://www.npmjs.com/package/music-metadata)
+   - [cors](https://www.npmjs.com/package/cors)
+   - [fs](https://www.npmjs.com/package/fs)
 
 ## Instalação
 
