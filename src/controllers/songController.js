@@ -98,7 +98,7 @@ const updateDatabase = async (request, response) => {
         else
             songs.map(song => {
                 if (!fs.existsSync(song.filepath)) {
-                    console.log('\x1b[0m\x1b[31m', `[DELETED] ${song.id} ${song.filepath}`)
+                    console.log('\x1b[0m\x1b[35m', `[ORPHAN] ${song.id} ${song.filepath}`)
                     songCollection.findByIdAndUpdate(song._id, { "orphan": true }, { useFindAndModify: false }, (err) => {
                         if (err)
                             console.log(err)
@@ -113,12 +113,37 @@ const updateDatabase = async (request, response) => {
             })
     })
     const END = Date.now()
-    console.log("\x1b[0m\x1b[33m", `Database updated in ${(END-START)/1000} seconds.`)
+    console.log("\x1b[0m\x1b[33m", `Database update ended in ${(END-START)/1000} seconds.`)
+}
+
+const cleanDatabase = async (request, response) => {
+    const START = Date.now()
+    response.status(200).send({
+        "message": "Database cleansing started."
+    })
+    console.log("\x1b[0m\x1b[33m", "Database cleansing started.")
+    await songCollection.find((err, songs) => {
+        if (err)
+            console.error(err)
+        else
+            songs.map(song => {
+                if (!fs.existsSync(song.filepath)) {
+                    console.log('\x1b[0m\x1b[31m', `[DELETED] ${song.id} ${song.filepath}`)
+                    songCollection.findByIdAndDelete(song._id, (err) => {
+                        if (err)
+                            console.log(err)
+                    })
+                }
+            })
+    })
+    const END = Date.now()
+    console.log("\x1b[0m\x1b[33m", `Database cleansing ended in ${(END-START)/1000} seconds.`)
 }
 
 module.exports = {
     getAll,
     getArtists,
     getGenres,
-    updateDatabase
+    updateDatabase,
+    cleanDatabase
 }

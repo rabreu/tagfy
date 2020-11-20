@@ -6,5 +6,6 @@ router.get('/songs', controller.getAll)
 router.get('/artists', controller.getArtists)
 router.get('/genres', controller.getGenres)
 router.post('/update', controller.updateDatabase)
+router.post('/clean', controller.cleanDatabase)
 
 module.exports = router
