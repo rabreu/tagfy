@@ -4,6 +4,9 @@ const listFolderFiles = require('../fs/listFolderFiles')
 const { PATH } = require('../conf')
 const md5File = require('md5-file')
 const fs = require('fs')
+const md5 = require('md5-file')
+const { response } = require('express')
+const { resolve } = require('path')
 
 const getAll = (request, response) => {
     songCollection.find((error, songs) => {
@@ -19,8 +22,8 @@ const getArtists = (request, response) => {
             return response.status(500).send(error)
         const artists = []
         songs.forEach(song => {
-            const artistExists = artists.find(artist => artist == song.artist )
-            if(!artistExists) {
+            const artistExists = artists.find(artist => artist == song.artist)
+            if (!artistExists) {
                 artists.push(song.artist)
             }
         })
@@ -35,8 +38,8 @@ const getGenres = (request, response) => {
         const genres = []
         songs.forEach(song => {
             song.genre.forEach(songGenre => {
-                const genreExists = genres.find(genre => genre == songGenre )
-                if(!genreExists) {
+                const genreExists = genres.find(genre => genre == songGenre)
+                if (!genreExists) {
                     genres.push(songGenre)
                 }
             })
@@ -45,30 +48,50 @@ const getGenres = (request, response) => {
     })
 }
 
-const updateDatabase = (request, response) => {
-    listFolderFiles(PATH, (file) => {
-        const id = md5File.sync(file)
-        console.log(`${id} ${file}`)
-        songCollection.findById(id, async (error, song) => {
-            if (error)
-                console.log(error)
-            if (!song) {
-                const songObj = new Song(file)
-                await songObj.fillWithMetadata()
-                new songCollection(songObj)
-                    .save((error) => {
+const updateDatabase = async (request, response) => {
+    response.status(200).send({
+        "message": "Database update started."
+    })
+    const audioFiles = []
+    await listFolderFiles(PATH, audioFiles)
+    await new Promise(async (resolve, reject) => {
+        let i = 0
+        audioFiles.forEach((file) => {
+            md5File(file)
+                .then(id => {
+                    songCollection.findById(id, async (error, song) => {
                         if (error)
-                            console.error(error)
+                            reject(error)
+                        if (!song) {
+                            console.log(`add ${id} ${file}`)
+                            const songObj = new Song(file)
+                            await songObj.fillWithMetadata()
+                            new songCollection(songObj)
+                                .save((error) => {
+                                    if (error)
+                                        reject(error)
+                                })
+                        } else {
+                            if (song.filepath != file) {
+                                songCollection.findByIdAndUpdate(song._id, { "filepath": file }, (error) => {
+                                    if (error)
+                                        reject(error)
+                                })
+                            }
+                        }
                     })
-            } else {
-                if (song.filepath != file) {
-                    songCollection.findByIdAndUpdate(song._id, { "filepath": file }, (error) => {
-                        if (error)
-                            console.error(error)
-                    })
-                }
-            }
+                    i++
+                    if(i == audioFiles.length)
+                        resolve()
+
+                })
+                .catch(err => {
+                    reject(err)
+                })
         })
+    })
+    .catch(err => {
+        console.error(err)
     })
     songCollection.find((error, songs) => {
         if (error)
@@ -76,22 +99,18 @@ const updateDatabase = (request, response) => {
         else
             songs.map(song => {
                 if (!fs.existsSync(song.filepath))
-                    songCollection.findByIdAndUpdate(song._id, { "orphan": true }, (error) => {
+                    songCollection.findByIdAndUpdate(song._id, { "orphan": true }, { useFindAndModify: false }, (error) => {
                         if (error)
-                            console.error(error)
+                            console.log(error)
                     })
                 else
-                    songCollection.findByIdAndUpdate(song._id, { "orphan": false }, (error) => {
+                    songCollection.findByIdAndUpdate(song._id, { "orphan": false }, { useFindAndModify: false }, (error) => {
                         if (error)
-                            console.error(error)
+                            console.log(error)
                     })
 
             })
-    })
-    return response.status(200).send({
-        "message": "Database updated."
-    })
-}
+    })}
 
 module.exports = {
     getAll,
