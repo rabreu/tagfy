@@ -1,5 +1,4 @@
 const fs = require('fs')
-const { resolve } = require('path')
 const { EXTENTIONS } = require('../conf')
 const fixPath = require('./fixPath')
 

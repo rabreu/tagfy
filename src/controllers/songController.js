@@ -4,22 +4,19 @@ const listFolderFiles = require('../fs/listFolderFiles')
 const { PATH } = require('../conf')
 const md5File = require('md5-file')
 const fs = require('fs')
-const md5 = require('md5-file')
-const { response } = require('express')
-const { resolve } = require('path')
 
 const getAll = (request, response) => {
-    songCollection.find((error, songs) => {
-        if (error)
-            return response.status(500).send(error)
+    songCollection.find((err, songs) => {
+        if (err)
+            return response.status(500).send(err)
         return response.status(200).send(songs)
     })
 }
 
 const getArtists = (request, response) => {
-    songCollection.find((error, songs) => {
-        if (error)
-            return response.status(500).send(error)
+    songCollection.find((err, songs) => {
+        if (err)
+            return response.status(500).send(err)
         const artists = []
         songs.forEach(song => {
             const artistExists = artists.find(artist => artist == song.artist)
@@ -32,9 +29,9 @@ const getArtists = (request, response) => {
 }
 
 const getGenres = (request, response) => {
-    songCollection.find((error, songs) => {
-        if (error)
-            return response.status(500).send(error)
+    songCollection.find((err, songs) => {
+        if (err)
+            return response.status(500).send(err)
         const genres = []
         songs.forEach(song => {
             song.genre.forEach(songGenre => {
@@ -49,33 +46,35 @@ const getGenres = (request, response) => {
 }
 
 const updateDatabase = async (request, response) => {
+    const START = Date.now()
     response.status(200).send({
         "message": "Database update started."
     })
+    console.log("\x1b[0m\x1b[33m", "Database update started.")
     const audioFiles = []
     await listFolderFiles(PATH, audioFiles)
-    await new Promise(async (resolve, reject) => {
+    await new Promise((resolve, reject) => {
         let i = 0
         audioFiles.forEach((file) => {
             md5File(file)
                 .then(id => {
-                    songCollection.findById(id, async (error, song) => {
-                        if (error)
-                            reject(error)
+                    songCollection.findById(id, async (err, song) => {
+                        if (err)
+                            reject(err)
                         if (!song) {
-                            console.log(`add ${id} ${file}`)
+                            console.log("\x1b[0m\x1b[32m", `[ADD] ${id} ${file}`)
                             const songObj = new Song(file)
                             await songObj.fillWithMetadata()
                             new songCollection(songObj)
-                                .save((error) => {
-                                    if (error)
-                                        reject(error)
+                                .save((err) => {
+                                    if (err)
+                                        reject(err)
                                 })
                         } else {
                             if (song.filepath != file) {
-                                songCollection.findByIdAndUpdate(song._id, { "filepath": file }, (error) => {
-                                    if (error)
-                                        reject(error)
+                                songCollection.findByIdAndUpdate(song._id, { "filepath": file }, (err) => {
+                                    if (err)
+                                        reject(err)
                                 })
                             }
                         }
@@ -93,24 +92,29 @@ const updateDatabase = async (request, response) => {
     .catch(err => {
         console.error(err)
     })
-    songCollection.find((error, songs) => {
-        if (error)
-            console.error(error)
+    await songCollection.find((err, songs) => {
+        if (err)
+            console.error(err)
         else
             songs.map(song => {
-                if (!fs.existsSync(song.filepath))
-                    songCollection.findByIdAndUpdate(song._id, { "orphan": true }, { useFindAndModify: false }, (error) => {
-                        if (error)
-                            console.log(error)
+                if (!fs.existsSync(song.filepath)) {
+                    console.log('\x1b[0m\x1b[31m', `[DELETED] ${song.id} ${song.filepath}`)
+                    songCollection.findByIdAndUpdate(song._id, { "orphan": true }, { useFindAndModify: false }, (err) => {
+                        if (err)
+                            console.log(err)
                     })
+                }
                 else
-                    songCollection.findByIdAndUpdate(song._id, { "orphan": false }, { useFindAndModify: false }, (error) => {
-                        if (error)
-                            console.log(error)
+                    songCollection.findByIdAndUpdate(song._id, { "orphan": false }, { useFindAndModify: false }, (err) => {
+                        if (err)
+                            console.log(err)
                     })
 
             })
-    })}
+    })
+    const END = Date.now()
+    console.log("\x1b[0m\x1b[33m", `Database updated in ${(END-START)/1000} seconds.`)
+}
 
 module.exports = {
     getAll,
